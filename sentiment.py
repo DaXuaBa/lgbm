@@ -67,8 +67,8 @@ def preprocess(textdata):
     return processedText
 
 def load_model():
-    vectoriser = joblib.load('./tfidf_vectoriser.pkl')
-    LGBMmodel = joblib.load('./lgbm_model.pkl')
+    vectoriser = joblib.load('tfidf_vectoriser.pkl')
+    LGBMmodel = joblib.load('lgbm_model.pkl')
     return vectoriser, LGBMmodel
 
 vectoriser, LGBMmodel = load_model()
