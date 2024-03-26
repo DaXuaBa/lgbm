@@ -153,14 +153,13 @@ if __name__ == "__main__":
     print("Printing Schema of Bronze Layer: ")
     tweet_df3.printSchema()
 
-    predict_udf = udf(lambda text: analyze_sentiment(text), StringType())
+    tweet_df4 = tweet_df3.withColumn("sentiment", analyze_sentiment(col("tweet")))
 
-    # Áp dụng hàm dự đoán cho cột "tweet" trong DataFrame
-    tweet_df4 = tweet_df3.select("tweet", predict_udf("tweet").alias('sentiment'))
-
+    # In schema của DataFrame kết quả
     print("Printing Schema of Sentiment: ")
     tweet_df4.printSchema()
 
+    # Ghi DataFrame kết quả ra console
     tweet_agg_write_stream = tweet_df4 \
         .writeStream \
         .trigger(processingTime='10 seconds') \
