@@ -133,7 +133,7 @@ if __name__ == "__main__":
         .select(from_json(col("value"), tweet_schema)\
         .alias("data"), "timestamp")
 
-    tweet_df3 = tweet_df2.select("tweet.*", "timestamp")
+    tweet_df3 = tweet_df2.select("data.*", "timestamp")
 
     tweet_df3 = tweet_df3.withColumn("partition_date", to_date("created_at"))
     tweet_df3 = tweet_df3.withColumn("partition_hour", hour(to_timestamp("created_at", 'yyyy-MM-dd HH:mm:ss')))
