@@ -3,7 +3,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from configparser import ConfigParser
-import sentiment
+import sys
+sys.path.append('./sentiment.py')
+from sentiment import predict
 
 conf_file_path = "/home/luongdb123/lgbm/data_processing/"
 conf_file_name = conf_file_path + "stream_app.conf"
@@ -64,7 +66,7 @@ if __name__ == "__main__":
     print("Printing Schema of Bronze Layer: ")
     tweet_df3.printSchema()
 
-    predict_udf = udf(lambda text: sentiment.predict(text), StringType())
+    predict_udf = udf(lambda text: predict(text), StringType())
 
     # Áp dụng hàm dự đoán cho cột "tweet" trong DataFrame
     tweet_df4 = tweet_df3.withColumn("sentiment", predict_udf("tweet"))
