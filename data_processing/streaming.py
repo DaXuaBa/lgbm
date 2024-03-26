@@ -156,12 +156,13 @@ if __name__ == "__main__":
     tweet_df3.printSchema()
 
     predict_udf = udf(lambda text: predict(text), StringType())
-    
-    print("Printing Schema of Sentiment: ")
 
     # Áp dụng hàm dự đoán cho cột "tweet" trong DataFrame
-    tweet_df4 = tweet_df3.select("tweet", predict_udf("tweet").alias('sentiment')).show()
+    tweet_df4 = tweet_df3.select("tweet", predict_udf("tweet").alias('sentiment'))
 
-    tweet_agg_write_stream_pre.awaitTermination()
+    print("Printing Schema of Sentiment: ")
+    tweet_df4.printSchema()
+
+    tweet_df4.awaitTermination()
 
     print("Real-Time Data Processing Application Completed.")
