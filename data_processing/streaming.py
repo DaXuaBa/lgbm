@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from configparser import ConfigParser
-from sentiment import predict
+from data_processing.sentiment import predict
 
 conf_file_path = "/home/luongdb123/lgbm/data_processing/"
 conf_file_name = conf_file_path + "stream_app.conf"
