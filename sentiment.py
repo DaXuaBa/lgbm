@@ -87,6 +87,5 @@ def predict(text):
     for text, pred in zip(text, sentiment):
         data.append((text,pred))
     # 0 is Negative, 1 is Positive
-    df = pd.DataFrame(data, columns = ['text','sentiment'])
-
+    df = pd.DataFrame({'sentiment': sentiment})
     return df

@@ -68,8 +68,8 @@ def preprocess(textdata):
     return processedText
 
 def load_model():
-    vectoriser = joblib.load('tfidf_vectoriser.pkl')
-    with open('Sentiment-LightGBM.pickle', 'rb') as file:
+    vectoriser = joblib.load('./lgbm/tfidf_vectoriser.pkl')
+    with open('./lgbm/Sentiment-LightGBM.pickle', 'rb') as file:
         LGBMmodel = pickle.load(file)
     return vectoriser, LGBMmodel
 
@@ -87,8 +87,7 @@ def predict(text):
     for text, pred in zip(text, sentiment):
         data.append((text,pred))
     # 0 is Negative, 1 is Positive
-    df = pd.DataFrame(data, columns = ['text','sentiment'])
-
+    df = pd.DataFrame({'sentiment': sentiment})
     return df
 
 import time
@@ -97,7 +96,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from configparser import ConfigParser
 
-conf_file_path = "/home/luongdb123/lgbm/data_processing/"
+conf_file_path = "./lgbm/data_processing/"
 conf_file_name = conf_file_path + "stream_app.conf"
 config_obj = ConfigParser()
 config_read_obj = config_obj.read(conf_file_name)
@@ -157,21 +156,12 @@ if __name__ == "__main__":
     tweet_df3.printSchema()
 
     predict_udf = udf(lambda text: predict(text), StringType())
+    
+    print("Printing Schema of Sentiment: ")
 
     # Áp dụng hàm dự đoán cho cột "tweet" trong DataFrame
-    tweet_df4 = tweet_df3.withColumn("sentiment", predict_udf("tweet"))
+    tweet_df4 = tweet_df3.select("tweet", predict_udf("tweet").alias('sentiment')).show()
 
-    tweet_agg_write_stream = tweet_df4 \
-        .writeStream \
-        .trigger(processingTime='10 seconds') \
-        .outputMode("update") \
-        .option("truncate", "false")\
-        .format("console") \
-        .start()
-
-    print("Printing Schema of Sentiment: ")
-    tweet_df4.printSchema()
-
-    tweet_agg_write_stream.awaitTermination()
+    tweet_agg_write_stream_pre.awaitTermination()
 
     print("Real-Time Data Processing Application Completed.")
