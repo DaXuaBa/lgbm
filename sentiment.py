@@ -1,5 +1,4 @@
 import re
-import pickle
 import joblib
 import pandas as pd
 
@@ -68,9 +67,8 @@ def preprocess(textdata):
     return processedText
 
 def load_model():
-    vectoriser = joblib.load('tfidf_vectoriser.pkl')
-    with open('Sentiment-LightGBM.pickle', 'rb') as file:
-        LGBMmodel = pickle.load(file)
+    vectoriser = joblib.load('./tfidf_vectoriser.pkl')
+    LGBMmodel = joblib.load('./lgbm_model.pkl')
     return vectoriser, LGBMmodel
 
 vectoriser, LGBMmodel = load_model()
@@ -79,7 +77,7 @@ def preprocess_text(text):
     processed_text = preprocess(text)
     return processed_text
 
-def predict(text):
+def analyze_sentiment(text):
     processed_text = preprocess_text(text)
     textdata = vectoriser.transform(processed_text)
     sentiment = LGBMmodel.predict(textdata)
